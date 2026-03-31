@@ -1,0 +1,17 @@
+# Environment Variables
+.env
+
+# SSH Keys
+*.key
+*.pem
+
+# Python Virtual Environments
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Local Databases and Temp Files
+pending_tasks.json
+*.zip
+*.log

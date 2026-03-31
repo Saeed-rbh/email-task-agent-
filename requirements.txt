@@ -1,0 +1,6 @@
+imap-tools
+todoist-api-python
+google-generativeai
+python-dotenv
+schedule
+pyTelegramBotAPI
