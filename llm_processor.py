@@ -92,24 +92,39 @@ Respond ONLY with valid JSON.
         print(f"Failed to parse Gemini response: {e}")
         return {"has_task": False}
 
-def generate_morning_brief(tasks_list):
+def generate_morning_brief(today_tasks, unassigned_tasks=None):
     if not model:
         return "Good morning! (AI failed to initialize)"
     
     tasks_text = ""
-    for idx, t in enumerate(tasks_list):
-        tasks_text += f"{idx+1}. {t.content} (Priority: {t.priority})\n"
+    if today_tasks:
+        for idx, t in enumerate(today_tasks):
+            tasks_text += f"{idx+1}. {t.content} (Priority: {t.priority})\n"
+    else:
+        tasks_text = "No tasks scheduled for today!\n"
         
+    unassigned_text = ""
+    if unassigned_tasks:
+        for idx, t in enumerate(unassigned_tasks):
+            unassigned_text += f"- {t.content}\n"
+    
     prompt = f"""
-Write a short, professional, and highly motivating Telegram morning brief summarizing these tasks that are due today. Keep it extremely concise and direct. Use emojis naturally.
+Write a short, professional, and highly motivating Telegram morning brief addressed to "Saeed". Keep it extremely concise and direct. Use emojis naturally.
 
 TASKS DUE TODAY:
-{tasks_text if tasks_text else "No tasks scheduled for today!"}
-
-Respond strictly with the text of the Telegram message. Do not include introductory text like 'Here is your brief'.
+{tasks_text}
 """
+    if unassigned_tasks:
+        prompt += f"""
+UNASSIGNED TASKS (NO DUE DATE):
+Provide a very brief summary or mention of these backlogged/unassigned tasks so Saeed keeps them in mind:
+{unassigned_text}
+"""
+    
+    prompt += "\nRespond strictly with the text of the Telegram message. Do not include introductory text like 'Here is your brief'."
+    
     try:
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
-        return f"Good morning! You have {len(tasks_list)} tasks due today."
+        return f"Good morning Saeed! You have {len(today_tasks)} tasks due today."

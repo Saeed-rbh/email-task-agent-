@@ -1,4 +1,5 @@
 import os
+import datetime
 from todoist_api_python.api import TodoistAPI
 from dotenv import load_dotenv
 
@@ -17,12 +18,19 @@ def get_todo_projects():
 
 def get_todays_tasks():
     if not api:
-        return []
+        return [], []
     try:
-        return api.get_tasks(filter="today")
+        today_tasks = api.get_tasks(filter="today")
+        unassigned_tasks = []
+        
+        # Weekday check (0-4 are Mon-Fri, 5-6 are weekend)
+        if datetime.datetime.now().weekday() < 5:
+            unassigned_tasks = api.get_tasks(filter="no date")
+            
+        return today_tasks, unassigned_tasks
     except Exception as e:
         print(f"Failed to fetch today's tasks: {e}")
-        return []
+        return [], []
 
 def create_todo_task(title, details, due_date=None, priority=1, project_name=None):
     if not api:
