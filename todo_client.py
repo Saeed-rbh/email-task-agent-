@@ -20,12 +20,25 @@ def get_todays_tasks():
     if not api:
         return [], []
     try:
-        today_tasks = api.get_tasks(filter="today")
+        all_tasks = []
+        for page in api.get_tasks():
+            all_tasks.extend(page)
+            
+        today_tasks = []
         unassigned_tasks = []
+        today_str = datetime.datetime.now().strftime("%Y-%m-%d")
         
         # Weekday check (0-4 are Mon-Fri, 5-6 are weekend)
-        if datetime.datetime.now().weekday() < 5:
-            unassigned_tasks = api.get_tasks(filter="no date")
+        is_weekday = datetime.datetime.now().weekday() < 5
+        
+        for t in all_tasks:
+            if getattr(t, 'due', None) and getattr(t.due, 'date', None):
+                due_date_str = str(t.due.date)[:10]
+                if due_date_str <= today_str:
+                    today_tasks.append(t)
+            else:
+                if is_weekday:
+                    unassigned_tasks.append(t)
             
         return today_tasks, unassigned_tasks
     except Exception as e:

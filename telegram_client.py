@@ -124,18 +124,35 @@ def handle_direct_message(message):
     
     result = extract_tasks_from_email("Direct Message", "You", message.text, project_list_str)
     
+    deleted_msg = False
+    
+    if result and result.get("has_info"):
+        info_msg = result.get("info_message", "")
+        if info_msg:
+            bot.delete_message(chat_id=message.chat.id, message_id=msg.message_id)
+            deleted_msg = True
+            send_telegram_message(f"ℹ️ *Information Update*\n\n{info_msg}")
+
     if result and result.get("has_task"):
-        bot.delete_message(chat_id=message.chat.id, message_id=msg.message_id)
+        if not deleted_msg:
+            bot.delete_message(chat_id=message.chat.id, message_id=msg.message_id)
+            deleted_msg = True
         
-        title = result.get("task_title", "Task from Telegram")
-        details = result.get("task_details", "")
-        due_date = result.get("due_date", "")
-        priority = result.get("priority", 1)
-        project_name = result.get("project_name", "Inbox")
-        
-        send_telegram_task(title, details, due_date, priority, project_name)
-    else:
-        bot.edit_message_text("No actionable task or meeting was found in that message.", chat_id=message.chat.id, message_id=msg.message_id)
+        tasks = result.get("tasks", [])
+        if not tasks and "task_title" in result:
+            tasks = [result]
+            
+        for t in tasks:
+            title = t.get("task_title", "Task from Telegram")
+            details = t.get("task_details", "")
+            due_date = t.get("due_date", "")
+            priority = t.get("priority", 1)
+            project_name = t.get("project_name", "Inbox")
+            
+            send_telegram_task(title, details, due_date, priority, project_name)
+            
+    if not result or (not result.get("has_task") and not result.get("has_info")):
+        bot.edit_message_text("No actionable task or informational update was found in that message.", chat_id=message.chat.id, message_id=msg.message_id)
 
 def start_telegram_bot():
     if not bot:
