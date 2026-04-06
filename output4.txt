@@ -1,0 +1,48 @@
+    def get_tasks(
+        self,
+        *,
+        project_id: str | None = None,
+        section_id: str | None = None,
+        parent_id: str | None = None,
+        label: str | None = None,
+        ids: list[str] | None = None,
+        limit: Annotated[int, Ge(1), Le(200)] | None = None,
+    ) -> Iterator[list[Task]]:
+        """
+        Get an iterable of lists of active tasks.
+
+        The response is an iterable of lists of active tasks matching the criteria.
+        Be aware that each iteration fires off a network request to the Todoist API,
+        and may result in rate limiting or other API restrictions.
+
+        :param project_id: Filter tasks by project ID.
+        :param section_id: Filter tasks by section ID.
+        :param parent_id: Filter tasks by parent task ID.
+        :param label: Filter tasks by label name.
+        :param ids: A list of the IDs of the tasks to retrieve.
+        :param limit: Maximum number of tasks per page.
+        :return: An iterable of lists of tasks.
+        :raises httpx.HTTPStatusError: If the API request fails.
+        :raises TypeError: If the API response structure is unexpected.
+        """
+        endpoint = get_api_url(TASKS_PATH)
+
+        params = kwargs_without_none(
+            project_id=project_id,
+            section_id=section_id,
+            parent_id=parent_id,
+            label=label,
+            ids=",".join(str(i) for i in ids) if ids is not None else None,
+            limit=limit,
+        )
+
+        return ResultsPaginator(
+            self._client,
+            endpoint,
+            "results",
+            Task.from_dict,
+            self._token,
+            self._request_id_fn,
+            params,
+        )
+

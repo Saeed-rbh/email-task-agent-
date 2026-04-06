@@ -1,0 +1,5 @@
+Failed to fetch today's tasks: TodoistAPI.get_tasks() got an unexpected keyword argument 'filter'
+Today Tasks Count: 0
+Unassigned Tasks Count: 0
+--------------------
+Error: 'charmap' codec can't encode characters in position 21-22: character maps to <undefined>

@@ -1,0 +1,1 @@
+(self, *, project_id: 'str | None' = None, section_id: 'str | None' = None, parent_id: 'str | None' = None, label: 'str | None' = None, ids: 'list[str] | None' = None, limit: 'Annotated[int, Ge(1), Le(200)] | None' = None) -> 'Iterator[list[Task]]'
