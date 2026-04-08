@@ -1,4 +1,5 @@
 import os
+import time
 import uuid
 import json
 import telebot
@@ -158,4 +159,10 @@ def start_telegram_bot():
     if not bot:
         print("Telegram bot not configured.")
         return
-    bot.infinity_polling()
+    while True:
+        try:
+            print("Starting Telegram polling...")
+            bot.infinity_polling(timeout=10, long_polling_timeout=5)
+        except Exception as e:
+            print(f"Telegram polling error: {e}")
+            time.sleep(15)
