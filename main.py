@@ -1,10 +1,11 @@
 import schedule
 import time
 import threading
+import os
 import sys
 
 # Ensure UTF-8 encoding for Windows console
-if sys.stdout.encoding != 'utf-8':
+if sys.stdout is not None:
     try:
         sys.stdout.reconfigure(encoding='utf-8')
     except AttributeError:

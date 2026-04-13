@@ -12,6 +12,7 @@ def build():
     args = [
         main_script,
         '--onefile',
+        '--noconsole',
         '--name', exe_name,
         '--clean',
         '--add-data', 'VERSION.txt;.',
