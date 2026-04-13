@@ -5,6 +5,7 @@ from email_client import get_unread_emails_last_24h
 from llm_processor import extract_tasks_from_email, generate_morning_brief
 from telegram_client import send_telegram_task, start_telegram_bot, send_telegram_message
 from todo_client import get_todo_projects, get_todays_tasks
+from update_manager import check_for_updates
 from imap_tools import AND
 
 def run_morning_briefing():
@@ -61,14 +62,18 @@ def poll_emails():
 def run_scheduler():
     schedule.every(1).minutes.do(poll_emails)
     schedule.every().day.at("08:00").do(run_morning_briefing)
+    schedule.every(1).hours.do(check_for_updates)
     
-    print("Scheduler running. Checking inbox every minute... Daily briefing set for 08:00.")
+    print("Scheduler running. Checking inbox every minute... Daily briefing set for 08:00. Checking for updates every hour.")
     while True:
         schedule.run_pending()
         time.sleep(1)
 
 if __name__ == "__main__":
     print("--- Gemini Telegram Email Agent ---")
+    
+    # Check for updates
+    check_for_updates()
     
     # Start scheduler in background thread
     scheduler_thread = threading.Thread(target=run_scheduler, daemon=True)
