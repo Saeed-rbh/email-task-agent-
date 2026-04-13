@@ -88,8 +88,8 @@ def create_updater_and_restart(old_exe, new_exe):
     
     bat_content = f"""
 @echo off
-echo [%date% %time%] Starting update process... > update_log.txt
 cd /d "{parent_dir}"
+echo [%date% %time%] Starting update process... > update_log.txt
 echo [%date% %time%] Changed directory to {parent_dir} >> update_log.txt
 timeout /t 3 /nobreak > nul
 :retry
