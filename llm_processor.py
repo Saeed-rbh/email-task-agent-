@@ -1,7 +1,11 @@
 import os
 import json
+import warnings
 import google.generativeai as genai
 from dotenv import load_dotenv
+
+# Suppress Gemini FutureWarnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="google.generativeai")
 
 load_dotenv()
 

@@ -1,6 +1,17 @@
 import schedule
 import time
 import threading
+import sys
+
+# Ensure UTF-8 encoding for Windows console
+if sys.stdout.encoding != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except AttributeError:
+        # Fallback for older python versions
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 from email_client import get_unread_emails_last_24h
 from llm_processor import extract_tasks_from_email, generate_morning_brief
 from telegram_client import send_telegram_task, start_telegram_bot, send_telegram_message
