@@ -54,13 +54,11 @@ def check_for_updates():
         else:
             print("You are running the latest version.")
             
-    except requests.exceptions.RequestException as e:
-        if hasattr(e, 'response') and e.response is not None and e.response.status_code == 404:
+    except Exception as e:
+        if "404" in str(e):
             print("No releases found on GitHub. (Create a Release and upload EmailAgent.exe to enable auto-updates)")
         else:
             print(f"Update check failed: {e}")
-    except Exception as e:
-        print(f"Update check failed: {e}")
 
 def perform_update(url, new_version):
     try:
