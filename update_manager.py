@@ -82,23 +82,27 @@ def create_updater_and_restart(old_exe, new_exe):
     # On Windows, we can't replace the running .exe.
     # We create a .bat file that waits for this process to exit,
     # replaces the file, and restarts.
+    parent_dir = os.path.dirname(old_exe)
+    old_name = os.path.basename(old_exe)
+    new_name = os.path.basename(new_exe)
     
     bat_content = f"""
 @echo off
 echo Finalizing update...
+cd /d "{parent_dir}"
 timeout /t 3 /nobreak > nul
 :retry
-move /y "{new_exe}" "{old_exe}" > nul
+move /y "{new_name}" "{old_name}" > nul
 if errorlevel 1 (
     echo Waiting for process to exit...
     timeout /t 2 /nobreak > nul
     goto retry
 )
 echo Update complete! Restarting...
-start "" "{old_exe}"
+start "" "{old_name}"
 del "%~f0"
 """
-    bat_path = os.path.join(os.path.dirname(old_exe), "update_helper.bat")
+    bat_path = os.path.join(parent_dir, "update_helper.bat")
     with open(bat_path, 'w') as f:
         f.write(bat_content)
     
