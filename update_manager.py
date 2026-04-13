@@ -101,10 +101,9 @@ if errorlevel 1 (
     goto retry
 )
 echo [%date% %time%] Update successful! Restarting {old_name}... >> update_log.txt
-start "" "{old_name}" >> update_log.txt 2>&1
-if errorlevel 1 (
-    echo [%date% %time%] Failed to start {old_name}! >> update_log.txt
-)
+start "" "{old_name}"
+echo [%date% %time%] Restart command issued. >> update_log.txt
+timeout /t 1 /nobreak > nul
 echo [%date% %time%] Cleaning up... >> update_log.txt
 del "%~f0"
 """
