@@ -85,8 +85,16 @@ def create_updater_and_restart(old_exe, new_exe):
     
     bat_content = f"""
 @echo off
-timeout /t 2 /nobreak > nul
-move /y "{new_exe}" "{old_exe}"
+echo Finalizing update...
+timeout /t 3 /nobreak > nul
+:retry
+move /y "{new_exe}" "{old_exe}" > nul
+if errorlevel 1 (
+    echo Waiting for process to exit...
+    timeout /t 2 /nobreak > nul
+    goto retry
+)
+echo Update complete! Restarting...
 start "" "{old_exe}"
 del "%~f0"
 """
