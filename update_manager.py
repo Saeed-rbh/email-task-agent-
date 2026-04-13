@@ -112,8 +112,9 @@ del "%~f0"
     with open(bat_path, 'w') as f:
         f.write(bat_content)
     
-    print("Updater ready. Application will now restart...")
-    subprocess.Popen([bat_path], shell=True)
+    print(f"Updater ready: {bat_path}")
+    os.startfile(bat_path)
+    time.sleep(1)
     sys.exit(0)
 
 if __name__ == "__main__":
