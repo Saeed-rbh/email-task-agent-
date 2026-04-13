@@ -56,7 +56,7 @@ def check_for_updates():
             
     except requests.exceptions.RequestException as e:
         if hasattr(e, 'response') and e.response is not None and e.response.status_code == 404:
-            print("Update check skipped: Repository is private or not found.")
+            print("No releases found on GitHub. (Create a Release and upload EmailAgent.exe to enable auto-updates)")
         else:
             print(f"Update check failed: {e}")
     except Exception as e:
